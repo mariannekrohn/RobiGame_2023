@@ -8,7 +8,7 @@ public class Robi {
 	int y;
 	int myColor;
 	int speed = 5;
-	private int score = 0;
+	public int score = 0;
 	PApplet window;
 
 	public int getScore() {

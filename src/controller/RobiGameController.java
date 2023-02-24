@@ -1,7 +1,13 @@
 package controller;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import model.Gem;
+import model.Highscore;
+import model.HighscoreReader;
+import model.HighscoreWriter;
 import model.Robi;
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -15,6 +21,7 @@ public class RobiGameController extends PApplet{
 	Robi r1;
 	ArrayList<Robi> robis;
 	ArrayList<Gem> gems; //Topf für Gem-Objekte 
+	ArrayList<Highscore> scores;
 	
 	PImage bgImage;
 	
@@ -27,6 +34,12 @@ public class RobiGameController extends PApplet{
 		
 		bgImage = loadImage("Squirrel.jpg");
 		gameState = State.START;
+		
+		
+		//lese Highscores (aus Performance-Gründen einmalig)
+		HighscoreReader r = new HighscoreReader();
+		
+		scores = r.readHighscores("highscore.txt");
 
 	}
 	
@@ -126,20 +139,42 @@ public class RobiGameController extends PApplet{
 	 * Startbildschirm zeichnen
 	 */
 	void drawStart() {
-		textSize(150);
-		text("Press SPACE to Start", 30, 200);
+		textSize(50);
+		text("Press SPACE to Start", 20, 100);
+		
+		//Highscores anzeigen:
+		textSize(30);
+		int yPos = 200;
+		for(Highscore s : scores) {
+			text(s.toString(), 10, yPos);
+			//Alternative
+			// text(s.getName() + ": " + s.getScore() + "Punkte", 10, yPos);
+			yPos +=50;
+		}
+		
 	}
 	
 	/**
 	 * Endbildschirm zeichnen
 	 */
 	void drawEnd() {
+		// Benutzernamen abfragen
+		String name = JOptionPane.showInputDialog("Bitte Name eingeben.");
+		noLoop();
+		
+		Highscore score = new Highscore(name, r1.score);
+		scores.add(score);
+		
+		HighscoreWriter newScore = new HighscoreWriter();
+		newScore.writeHighscores(scores, "highscore.txt");
+		
+		
 		textSize(150);
 		text("FINISH", 30, 200);
+		
 	}
 	
-	
-	
+
 	void drawGame() {
 	
 		r1.drawRobi();
@@ -194,7 +229,6 @@ public class RobiGameController extends PApplet{
 				gameState = State.START;
 			}
 		}
-
 	}
 
 }
