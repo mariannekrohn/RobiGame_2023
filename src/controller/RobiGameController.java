@@ -1,6 +1,7 @@
 package controller;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import javax.swing.JOptionPane;
 
@@ -40,7 +41,15 @@ public class RobiGameController extends PApplet{
 		HighscoreReader r = new HighscoreReader();
 		
 		scores = r.readHighscores("highscore.txt");
-
+		
+		scores.sort(new Comparator<Highscore>() {
+			
+			@Override
+			public int compare(Highscore arg0, Highscore arg1) {
+				// nach Punktestand absteigend sortieren
+				return arg1.getScore() - arg0.getScore();
+				}
+		});
 	}
 	
 	/**
